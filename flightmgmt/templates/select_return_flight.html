@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}Select Return Flight{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Select Return Flight</h2>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4>Outbound Flight Details</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>From:</strong> {{ outbound_flight.Source }}</p>
+                    <p><strong>To:</strong> {{ outbound_flight.Destination }}</p>
+                    <p><strong>Departure:</strong> {{ outbound_flight.DepartureTime }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Arrival:</strong> {{ outbound_flight.ArrivalTime }}</p>
+                    <p><strong>Aircraft:</strong> {{ outbound_flight.Model }}</p>
+                    <p><strong>Flight ID:</strong> {{ outbound_flight.FlightID }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3>Available Return Flights</h3>
+    
+    {% if return_flights %}
+    <form method="post" action="{{ url_for('select_return_flight', outbound_flight_id=outbound_flight_id) }}">
+        <div class="list-group mb-4">
+            {% for flight in return_flights %}
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-md-1">
+                        <input type="radio" name="return_flight_id" value="{{ flight.FlightID }}" class="form-check-input" required>
+                    </div>
+                    <div class="col-md-3">
+                        <h5>{{ flight.Source }} to {{ flight.Destination }}</h5>
+                        <p class="mb-1">Flight ID: {{ flight.FlightID }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1">Departure: {{ flight.DepartureTime }}</p>
+                        <p class="mb-1">Arrival: {{ flight.ArrivalTime }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="mb-1">Aircraft: {{ flight.Model }}</p>
+                        <p class="mb-1">Available Seats: {{ flight.Capacity - flight.BookedSeats }}</p>
+                    </div>
+                    <div class="col-md-2">
+                        <h5>
+                            {% if flight.BookedSeats < flight.Capacity * 0.5 %}
+                            $100.00
+                            {% else %}
+                            $150.00
+                            {% endif %}
+                        </h5>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Continue to Booking</button>
+        </div>
+    </form>
+    {% else %}
+    <div class="alert alert-info">
+        No return flights available. Please choose a different date or route.
+    </div>
+    <a href="{{ url_for('search_flights') }}" class="btn btn-primary">Back to Search</a>
+    {% endif %}
+</div>
+{% endblock %}

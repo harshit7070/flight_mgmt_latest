@@ -1,0 +1,50 @@
+<!-- templates/admin/edit_flight.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Edit Flight</h2>
+    <form method="POST" action="{{ url_for('edit_flight', flight_id=flight.FlightID) }}">
+        <div class="form-group">
+            <label for="source">Source</label>
+            <input type="text" class="form-control" id="source" name="source" value="{{ flight.Source }}" required>
+        </div>
+        <div class="form-group">
+            <label for="destination">Destination</label>
+            <input type="text" class="form-control" id="destination" name="destination" value="{{ flight.Destination }}" required>
+        </div>
+        <div class="form-group">
+            <label for="departure_time">Departure Time</label>
+            <input type="datetime-local" class="form-control" id="departure_time" name="departure_time" 
+                   value="{{ flight.DepartureTime.strftime('%Y-%m-%dT%H:%M') if flight.DepartureTime else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="arrival_time">Arrival Time</label>
+            <input type="datetime-local" class="form-control" id="arrival_time" name="arrival_time" 
+                   value="{{ flight.ArrivalTime.strftime('%Y-%m-%dT%H:%M') if flight.ArrivalTime else '' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="aircraft_id">Aircraft</label>
+            <select class="form-control" id="aircraft_id" name="aircraft_id" required>
+                {% for a in aircraft %}
+                <option value="{{ a.AircraftID }}" {% if a.AircraftID == flight.AircraftID %}selected{% endif %}>
+                    {{ a.Model }} (Capacity: {{ a.Capacity }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" id="status" name="status" required>
+                <option value="Scheduled" {% if flight.Status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+                <option value="On Time" {% if flight.Status == 'On Time' %}selected{% endif %}>On Time</option>
+                <option value="Delayed" {% if flight.Status == 'Delayed' %}selected{% endif %}>Delayed</option>
+                <option value="Cancelled" {% if flight.Status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                <option value="Completed" {% if flight.Status == 'Completed' %}selected{% endif %}>Completed</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Flight</button>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
